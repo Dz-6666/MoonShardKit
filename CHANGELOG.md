@@ -18,3 +18,4 @@
 - Cross-backend GitHub Actions checks, tests, demo, and workload.
 - Contribution, issue, pull request, security, and licensing policies.
 - Structured topology validation for duplicate and missing metadata.
+- Unified algorithm dispatcher and deterministic batch placement.

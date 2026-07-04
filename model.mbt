@@ -16,6 +16,14 @@ pub(all) enum TopologyIssue {
 } derive(Debug, Eq)
 
 ///|
+/// Built-in owner-selection strategy.
+pub(all) enum PlacementAlgorithm {
+  ConsistentRing
+  Rendezvous
+  TopologyAware
+} derive(Debug, Eq)
+
+///|
 /// A storage or compute node participating in shard placement.
 pub(all) struct ShardNode {
   id : String
