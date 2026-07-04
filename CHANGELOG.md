@@ -8,3 +8,4 @@
 - Stable cross-backend hash and placement score primitives.
 - Node topology, placement, migration, and distribution report models.
 - Weighted virtual-node consistent hash ring with distinct replica lookup.
+- Integer-ticket weighted rendezvous ranking and placement namespaces.
