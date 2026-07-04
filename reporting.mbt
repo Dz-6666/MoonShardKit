@@ -1,3 +1,4 @@
+///|
 /// Escapes a string for JSON output.
 pub fn json_escape(value : String) -> String {
   let builder = StringBuilder(size_hint=value.length())
@@ -14,6 +15,7 @@ pub fn json_escape(value : String) -> String {
   builder.to_string()
 }
 
+///|
 fn optional_string_json(value : String?) -> String {
   match value {
     Some(text) => "\"\{json_escape(text)}\""
@@ -21,12 +23,11 @@ fn optional_string_json(value : String?) -> String {
   }
 }
 
+///|
 /// Encodes one placement.
 pub fn KeyPlacement::to_json(self : KeyPlacement) -> String {
   let builder = StringBuilder()
-  builder.write_string(
-    "{\"key\":\"\{json_escape(self.key)}\",\"owners\":[",
-  )
+  builder.write_string("{\"key\":\"\{json_escape(self.key)}\",\"owners\":[")
   for index = 0; index < self.owners.length(); index = index + 1 {
     if index > 0 {
       builder.write_char(',')
@@ -39,6 +40,7 @@ pub fn KeyPlacement::to_json(self : KeyPlacement) -> String {
   builder.to_string()
 }
 
+///|
 /// Returns a stable name for one migration action.
 pub fn move_kind_name(kind : MoveKind) -> String {
   match kind {
@@ -48,6 +50,7 @@ pub fn move_kind_name(kind : MoveKind) -> String {
   }
 }
 
+///|
 /// Encodes one migration plan.
 pub fn MigrationPlan::to_json(self : MigrationPlan) -> String {
   let builder = StringBuilder()
@@ -67,6 +70,7 @@ pub fn MigrationPlan::to_json(self : MigrationPlan) -> String {
   builder.to_string()
 }
 
+///|
 /// Encodes distribution evidence.
 pub fn DistributionReport::to_json(self : DistributionReport) -> String {
   let builder = StringBuilder()

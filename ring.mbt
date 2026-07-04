@@ -1,9 +1,11 @@
+///|
 /// One virtual point on a consistent hash ring.
 struct RingPoint {
   position : UInt
   node_id : String
 }
 
+///|
 /// Immutable consistent hash ring.
 pub struct ConsistentHashRing {
   points : Array[RingPoint]
@@ -11,6 +13,7 @@ pub struct ConsistentHashRing {
   seed : UInt
 }
 
+///|
 /// Builds a ring from active nodes.
 pub fn ConsistentHashRing::build(
   nodes : Array[ShardNode],
@@ -41,16 +44,19 @@ pub fn ConsistentHashRing::build(
   { points, eligible_nodes: eligible, seed }
 }
 
+///|
 /// Returns the number of virtual points.
 pub fn ConsistentHashRing::point_count(self : ConsistentHashRing) -> Int {
   self.points.length()
 }
 
+///|
 /// Returns the number of active real nodes.
 pub fn ConsistentHashRing::node_count(self : ConsistentHashRing) -> Int {
   self.eligible_nodes
 }
 
+///|
 /// Finds the first ring point at or clockwise from a key hash.
 fn ConsistentHashRing::start_index(
   self : ConsistentHashRing,
@@ -70,9 +76,14 @@ fn ConsistentHashRing::start_index(
       high = middle
     }
   }
-  if low == self.points.length() { 0 } else { low }
+  if low == self.points.length() {
+    0
+  } else {
+    low
+  }
 }
 
+///|
 /// Returns the primary owner for a key.
 pub fn ConsistentHashRing::owner(
   self : ConsistentHashRing,
@@ -85,6 +96,7 @@ pub fn ConsistentHashRing::owner(
   }
 }
 
+///|
 /// Returns distinct clockwise owners, primary first.
 pub fn ConsistentHashRing::owners(
   self : ConsistentHashRing,

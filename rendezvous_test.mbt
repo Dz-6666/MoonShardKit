@@ -24,11 +24,7 @@ test "rendezvous ranking is deterministic" {
 
 ///|
 test "rendezvous returns distinct owners in score order" {
-  let owners = @moonshardkit.rendezvous_owners(
-    rendezvous_nodes(),
-    "order-9",
-    3,
-  )
+  let owners = @moonshardkit.rendezvous_owners(rendezvous_nodes(), "order-9", 3)
   assert_eq(owners.length(), 3)
   assert_true(owners[0] != owners[1])
   assert_true(owners[1] != owners[2])
@@ -42,9 +38,7 @@ test "rendezvous excludes non-active nodes" {
       @moonshardkit.NodeStatus::Offline,
     ),
   ]
-  assert_true(
-    @moonshardkit.rendezvous_owner(nodes, "key") == Some("active"),
-  )
+  assert_true(@moonshardkit.rendezvous_owner(nodes, "key") == Some("active"))
 }
 
 ///|
@@ -81,10 +75,7 @@ test "weighted rendezvous gives heavier node more primary keys" {
 ///|
 test "salt creates independent placement namespaces" {
   let nodes = rendezvous_nodes()
-  let default_score = @moonshardkit.rendezvous_node_score(
-    "key",
-    nodes[0],
-  )
+  let default_score = @moonshardkit.rendezvous_node_score("key", nodes[0])
   let other_score = @moonshardkit.rendezvous_node_score(
     "key",
     nodes[0],

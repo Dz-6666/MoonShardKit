@@ -66,12 +66,7 @@ test "taking a node offline produces repair moves" {
 test "replica count changes are visible in move details" {
   let keys = ["one"]
   let before = base_cluster()
-  let old_plan = @moonshardkit.plan_migration(
-    keys,
-    before,
-    before,
-    replicas=1,
-  )
+  let old_plan = @moonshardkit.plan_migration(keys, before, before, replicas=1)
   assert_eq(old_plan.moves.length(), 0)
   let empty : Array[@moonshardkit.ShardNode] = []
   let remove_plan = @moonshardkit.plan_migration(

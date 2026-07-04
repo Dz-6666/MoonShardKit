@@ -1,0 +1,47 @@
+name: MoonShardKit CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  moonbit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup MoonBit
+        uses: hustcer/setup-moonbit@v1
+
+      - name: Show toolchain
+        run: moon version --all
+
+      - name: Format check
+        run: moon fmt --check
+
+      - name: Check all backends
+        run: moon check --target all
+
+      - name: Test native
+        run: moon test --target native
+
+      - name: Test JavaScript
+        run: moon test --target js
+
+      - name: Test WebAssembly
+        run: moon test --target wasm
+
+      - name: Test Wasm GC
+        run: moon test --target wasm-gc
+
+      - name: Run placement demo
+        run: moon run cmd/main --target js
+
+      - name: Run deterministic workload
+        run: moon run bench/main --target js

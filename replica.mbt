@@ -1,3 +1,4 @@
+///|
 fn find_node(nodes : Array[ShardNode], id : String) -> ShardNode? {
   for node in nodes {
     if node.id == id {
@@ -7,6 +8,7 @@ fn find_node(nodes : Array[ShardNode], id : String) -> ShardNode? {
   None
 }
 
+///|
 fn selected_has_zone(
   nodes : Array[ShardNode],
   selected : Array[String],
@@ -21,6 +23,7 @@ fn selected_has_zone(
   false
 }
 
+///|
 fn selected_has_rack(
   nodes : Array[ShardNode],
   selected : Array[String],
@@ -29,16 +32,14 @@ fn selected_has_rack(
 ) -> Bool {
   for id in selected {
     match find_node(nodes, id) {
-      Some(node) =>
-        if node.zone == zone && node.rack == rack {
-          return true
-        }
+      Some(node) => if node.zone == zone && node.rack == rack { return true }
       None => ()
     }
   }
   false
 }
 
+///|
 /// Places ordered replicas while preferring zone and rack diversity.
 pub fn place_replicas(
   nodes : Array[ShardNode],
@@ -47,12 +48,7 @@ pub fn place_replicas(
   salt? : String = "moonshardkit",
 ) -> KeyPlacement {
   if replicas <= 0 {
-    return {
-      key,
-      owners: [],
-      complete: true,
-      message: "no replicas requested",
-    }
+    return { key, owners: [], complete: true, message: "no replicas requested" }
   }
   let ranked = rendezvous_owners(nodes, key, nodes.length(), salt~)
   let selected : Array[String] = []

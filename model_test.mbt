@@ -1,10 +1,6 @@
 ///|
 test "node constructor normalizes invalid capacity settings" {
-  let node = @moonshardkit.ShardNode::new(
-    "a",
-    weight=0,
-    virtual_nodes=-1,
-  )
+  let node = @moonshardkit.ShardNode::new("a", weight=0, virtual_nodes=-1)
   assert_eq(node.weight, 1)
   assert_eq(node.virtual_nodes, 1)
   assert_true(node.is_eligible())

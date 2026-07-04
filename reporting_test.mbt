@@ -17,12 +17,14 @@ test "migration JSON preserves null endpoints" {
     keys: 1,
     moved_keys: 1,
     unchanged_keys: 0,
-    moves: [{
-      key: "k",
-      from_node: None,
-      to_node: Some("n"),
-      kind: @moonshardkit.MoveKind::ReplicaAdded,
-    }],
+    moves: [
+      {
+        key: "k",
+        from_node: None,
+        to_node: Some("n"),
+        kind: @moonshardkit.MoveKind::ReplicaAdded,
+      },
+    ],
   }
   let json = plan.to_json()
   assert_true(json.contains("\"from\":null"))

@@ -37,10 +37,7 @@ test "distribution report exposes bounded skew" {
     @moonshardkit.ShardNode::new("b"),
     @moonshardkit.ShardNode::new("c"),
   ]
-  let report = @moonshardkit.analyze_distribution(
-    analysis_keys(3000),
-    nodes,
-  )
+  let report = @moonshardkit.analyze_distribution(analysis_keys(3000), nodes)
   assert_true(report.min_primary > 700)
   assert_true(report.max_primary < 1300)
   assert_true(report.spread < 600)

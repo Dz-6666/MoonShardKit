@@ -1,3 +1,4 @@
+///|
 fn node_index(loads : Array[NodeLoad], id : String) -> Int {
   for index = 0; index < loads.length(); index = index + 1 {
     if loads[index].node_id == id {
@@ -7,6 +8,7 @@ fn node_index(loads : Array[NodeLoad], id : String) -> Int {
   -1
 }
 
+///|
 fn placement_zone_violations(
   nodes : Array[ShardNode],
   owners : Array[String],
@@ -27,6 +29,7 @@ fn placement_zone_violations(
   violations
 }
 
+///|
 fn placement_rack_violations(
   nodes : Array[ShardNode],
   owners : Array[String],
@@ -49,6 +52,7 @@ fn placement_rack_violations(
   violations
 }
 
+///|
 /// Measures placement balance and topology constraint outcomes.
 pub fn analyze_distribution(
   keys : Array[String],
@@ -74,8 +78,8 @@ pub fn analyze_distribution(
       placement_zone_violations(nodes, placement.owners)
     rack_violations = rack_violations +
       placement_rack_violations(nodes, placement.owners)
-    for owner_index = 0;
-        owner_index < placement.owners.length();
+    for owner_index = 0
+        owner_index < placement.owners.length()
         owner_index = owner_index + 1 {
       let index = node_index(loads, placement.owners[owner_index])
       if index >= 0 {

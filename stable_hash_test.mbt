@@ -27,8 +27,5 @@ test "long input remains deterministic" {
     builder.write_char('x')
   }
   let text = builder.to_string()
-  assert_eq(
-    @moonshardkit.stable_hash(text),
-    @moonshardkit.stable_hash(text),
-  )
+  assert_eq(@moonshardkit.stable_hash(text), @moonshardkit.stable_hash(text))
 }

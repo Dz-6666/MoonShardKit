@@ -1,7 +1,13 @@
+///|
 fn first_owner(owners : Array[String]) -> String? {
-  if owners.length() == 0 { None } else { Some(owners[0]) }
+  if owners.length() == 0 {
+    None
+  } else {
+    Some(owners[0])
+  }
 }
 
+///|
 /// Compares two topology snapshots and emits deterministic ownership changes.
 pub fn plan_migration(
   keys : Array[String],
@@ -57,6 +63,7 @@ pub fn plan_migration(
   }
 }
 
+///|
 /// Returns the fraction of keys whose ordered owner set changed.
 pub fn movement_ratio(plan : MigrationPlan) -> Double {
   if plan.keys == 0 {

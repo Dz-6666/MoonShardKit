@@ -20,11 +20,7 @@ fn zone_for(id : String) -> String {
 
 ///|
 test "replica placement prefers three distinct zones" {
-  let placement = @moonshardkit.place_replicas(
-    topology_nodes(),
-    "order-1",
-    3,
-  )
+  let placement = @moonshardkit.place_replicas(topology_nodes(), "order-1", 3)
   assert_true(placement.complete)
   assert_eq(placement.owners.length(), 3)
   assert_true(zone_for(placement.owners[0]) != zone_for(placement.owners[1]))

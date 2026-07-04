@@ -1,3 +1,4 @@
+///|
 /// Administrative state used by placement algorithms.
 pub(all) enum NodeStatus {
   Active
@@ -5,6 +6,7 @@ pub(all) enum NodeStatus {
   Offline
 } derive(Debug, Eq)
 
+///|
 /// A storage or compute node participating in shard placement.
 pub(all) struct ShardNode {
   id : String
@@ -15,6 +17,7 @@ pub(all) struct ShardNode {
   status : NodeStatus
 } derive(Debug, Eq)
 
+///|
 /// One key and its ordered owner list.
 pub(all) struct KeyPlacement {
   key : String
@@ -23,6 +26,7 @@ pub(all) struct KeyPlacement {
   message : String
 } derive(Debug, Eq)
 
+///|
 /// Why an ownership assignment changed.
 pub(all) enum MoveKind {
   PrimaryChanged
@@ -30,6 +34,7 @@ pub(all) enum MoveKind {
   ReplicaRemoved
 } derive(Debug, Eq)
 
+///|
 /// One planned ownership change between topology snapshots.
 pub(all) struct ShardMove {
   key : String
@@ -38,6 +43,7 @@ pub(all) struct ShardMove {
   kind : MoveKind
 } derive(Debug, Eq)
 
+///|
 /// Aggregate migration evidence.
 pub(all) struct MigrationPlan {
   keys : Int
@@ -46,6 +52,7 @@ pub(all) struct MigrationPlan {
   moves : Array[ShardMove]
 } derive(Debug, Eq)
 
+///|
 /// Per-node ownership count.
 pub(all) struct NodeLoad {
   node_id : String
@@ -53,6 +60,7 @@ pub(all) struct NodeLoad {
   replica_keys : Int
 } derive(Debug, Eq)
 
+///|
 /// Distribution quality summary.
 pub(all) struct DistributionReport {
   keys : Int
@@ -66,6 +74,7 @@ pub(all) struct DistributionReport {
   rack_violations : Int
 } derive(Debug, Eq)
 
+///|
 /// Creates a normalized active node.
 pub fn ShardNode::new(
   id : String,
@@ -76,22 +85,32 @@ pub fn ShardNode::new(
 ) -> ShardNode {
   {
     id,
-    weight: if weight < 1 { 1 } else { weight },
-    virtual_nodes: if virtual_nodes < 1 { 1 } else { virtual_nodes },
+    weight: if weight < 1 {
+      1
+    } else {
+      weight
+    },
+    virtual_nodes: if virtual_nodes < 1 {
+      1
+    } else {
+      virtual_nodes
+    },
     zone,
     rack,
     status: Active,
   }
 }
 
+///|
 /// Returns a copy with a new administrative state.
 pub fn ShardNode::with_status(
   self : ShardNode,
   status : NodeStatus,
 ) -> ShardNode {
-  { ..self, status }
+  { ..self, status, }
 }
 
+///|
 /// Returns whether the node can receive new ownership.
 pub fn ShardNode::is_eligible(self : ShardNode) -> Bool {
   self.status == Active

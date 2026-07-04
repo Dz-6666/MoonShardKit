@@ -1,8 +1,10 @@
+///|
 priv struct RendezvousRank {
   node_id : String
   score : UInt
 }
 
+///|
 /// Computes a deterministic weighted score for one node.
 ///
 /// Integer tickets avoid backend-dependent floating-point logarithms. A node
@@ -22,6 +24,7 @@ pub fn rendezvous_node_score(
   best
 }
 
+///|
 /// Ranks all active nodes using weighted highest-random-weight placement.
 pub fn rendezvous_owners(
   nodes : Array[ShardNode],
@@ -60,6 +63,7 @@ pub fn rendezvous_owners(
   result
 }
 
+///|
 /// Returns the highest-ranked active node.
 pub fn rendezvous_owner(
   nodes : Array[ShardNode],
@@ -67,5 +71,9 @@ pub fn rendezvous_owner(
   salt? : String = "moonshardkit",
 ) -> String? {
   let owners = rendezvous_owners(nodes, key, 1, salt~)
-  if owners.length() == 0 { None } else { Some(owners[0]) }
+  if owners.length() == 0 {
+    None
+  } else {
+    Some(owners[0])
+  }
 }
