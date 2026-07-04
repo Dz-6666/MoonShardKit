@@ -7,6 +7,15 @@ pub(all) enum NodeStatus {
 } derive(Debug, Eq)
 
 ///|
+/// Structural problem in a topology snapshot.
+pub(all) enum TopologyIssue {
+  EmptyNodeId(Int)
+  DuplicateNodeId(String)
+  EmptyZone(String)
+  EmptyRack(String)
+} derive(Debug, Eq)
+
+///|
 /// A storage or compute node participating in shard placement.
 pub(all) struct ShardNode {
   id : String
