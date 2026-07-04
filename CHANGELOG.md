@@ -11,3 +11,4 @@
 - Integer-ticket weighted rendezvous ranking and placement namespaces.
 - Topology-aware replica placement with graceful constraint fallback.
 - Snapshot migration plans with primary, replica, and movement evidence.
+- Distribution load, skew, completeness, zone, and rack analysis.
