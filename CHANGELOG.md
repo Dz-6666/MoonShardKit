@@ -13,3 +13,4 @@
 - Snapshot migration plans with primary, replica, and movement evidence.
 - Distribution load, skew, completeness, zone, and rack analysis.
 - Stable JSON output for placement, migration, and distribution reports.
+- CLI demonstration for placement, distribution, and node expansion planning.
