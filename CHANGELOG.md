@@ -12,3 +12,4 @@
 - Topology-aware replica placement with graceful constraint fallback.
 - Snapshot migration plans with primary, replica, and movement evidence.
 - Distribution load, skew, completeness, zone, and rack analysis.
+- Stable JSON output for placement, migration, and distribution reports.
