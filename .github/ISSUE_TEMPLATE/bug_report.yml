@@ -1,0 +1,48 @@
+name: Placement bug
+description: Report an incorrect owner, migration, or quality result.
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: topology
+    attributes:
+      label: Minimal topology
+      description: Include node IDs, weights, status, zones, and racks.
+    validations:
+      required: true
+  - type: textarea
+    id: keys
+    attributes:
+      label: Deterministic key sample
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected result
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual result
+    validations:
+      required: true
+  - type: input
+    id: toolchain
+    attributes:
+      label: MoonBit toolchain
+    validations:
+      required: true
+  - type: dropdown
+    id: backend
+    attributes:
+      label: Backend
+      options:
+        - Native
+        - JavaScript
+        - WebAssembly
+        - Wasm-GC
+        - All backends
+    validations:
+      required: true

@@ -1,0 +1,33 @@
+name: Placement proposal
+description: Propose an algorithm, policy, or report.
+title: "[Proposal] "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Operational problem
+    validations:
+      required: true
+  - type: textarea
+    id: policy
+    attributes:
+      label: Proposed deterministic policy
+      description: Define inputs, outputs, tie-breaking, and constraints.
+    validations:
+      required: true
+  - type: textarea
+    id: related
+    attributes:
+      label: Related MoonBit packages
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Design checks
+      options:
+        - label: The proposal remains platform-neutral.
+          required: true
+        - label: The proposal has a deterministic test strategy.
+          required: true
