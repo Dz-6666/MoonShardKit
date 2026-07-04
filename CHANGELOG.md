@@ -14,3 +14,4 @@
 - Distribution load, skew, completeness, zone, and rack analysis.
 - Stable JSON output for placement, migration, and distribution reports.
 - CLI demonstration for placement, distribution, and node expansion planning.
+- Deterministic 10,000-key distribution and expansion workload.

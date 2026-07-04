@@ -1,0 +1,7 @@
+import {
+  "Dz-6666/moonshardkit" @shard,
+}
+
+options(
+  "is-main": true,
+)
