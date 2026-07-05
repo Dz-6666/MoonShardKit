@@ -1,0 +1,139 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "Dz-6666/moonshardkit"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn analyze_distribution(Array[String], Array[ShardNode], replicas? : Int, salt? : String) -> DistributionReport
+
+pub fn json_escape(String) -> String
+
+pub fn move_kind_name(MoveKind) -> String
+
+pub fn movement_ratio(MigrationPlan) -> Double
+
+pub fn place_key(Array[ShardNode], String, Int, algorithm? : PlacementAlgorithm, seed? : UInt, salt? : String) -> KeyPlacement
+
+pub fn place_keys(Array[ShardNode], Array[String], Int, algorithm? : PlacementAlgorithm, seed? : UInt, salt? : String) -> Array[KeyPlacement]
+
+pub fn place_replicas(Array[ShardNode], String, Int, salt? : String) -> KeyPlacement
+
+pub fn placement_score(String, String, String) -> UInt
+
+pub fn plan_migration(Array[String], Array[ShardNode], Array[ShardNode], replicas? : Int, salt? : String) -> MigrationPlan
+
+pub fn rendezvous_node_score(String, ShardNode, salt? : String) -> UInt
+
+pub fn rendezvous_owner(Array[ShardNode], String, salt? : String) -> String?
+
+pub fn rendezvous_owners(Array[ShardNode], String, Int, salt? : String) -> Array[String]
+
+pub fn stable_hash(String, seed? : UInt) -> UInt
+
+pub fn topology_is_valid(Array[ShardNode]) -> Bool
+
+pub fn validate_topology(Array[ShardNode]) -> Array[TopologyIssue]
+
+pub fn virtual_position(String, Int, UInt) -> UInt
+
+// Errors
+
+// Types and methods
+pub struct ConsistentHashRing {
+  points : Array[RingPoint]
+  eligible_nodes : Int
+  seed : UInt
+}
+pub fn ConsistentHashRing::build(Array[ShardNode], seed? : UInt) -> Self
+pub fn ConsistentHashRing::node_count(Self) -> Int
+pub fn ConsistentHashRing::owner(Self, String) -> String?
+pub fn ConsistentHashRing::owners(Self, String, Int) -> Array[String]
+pub fn ConsistentHashRing::point_count(Self) -> Int
+
+pub(all) struct DistributionReport {
+  keys : Int
+  replicas : Int
+  nodes : Array[NodeLoad]
+  min_primary : Int
+  max_primary : Int
+  spread : Int
+  incomplete_placements : Int
+  zone_violations : Int
+  rack_violations : Int
+} derive(Eq, @debug.Debug)
+pub fn DistributionReport::to_json(Self) -> String
+
+pub(all) struct KeyPlacement {
+  key : String
+  owners : Array[String]
+  complete : Bool
+  message : String
+} derive(Eq, @debug.Debug)
+pub fn KeyPlacement::to_json(Self) -> String
+
+pub(all) struct MigrationPlan {
+  keys : Int
+  moved_keys : Int
+  unchanged_keys : Int
+  moves : Array[ShardMove]
+} derive(Eq, @debug.Debug)
+pub fn MigrationPlan::to_json(Self) -> String
+
+pub(all) enum MoveKind {
+  PrimaryChanged
+  ReplicaAdded
+  ReplicaRemoved
+} derive(Eq, @debug.Debug)
+
+pub(all) struct NodeLoad {
+  node_id : String
+  primary_keys : Int
+  replica_keys : Int
+} derive(Eq, @debug.Debug)
+
+pub(all) enum NodeStatus {
+  Active
+  Draining
+  Offline
+} derive(Eq, @debug.Debug)
+
+pub(all) enum PlacementAlgorithm {
+  ConsistentRing
+  Rendezvous
+  TopologyAware
+} derive(Eq, @debug.Debug)
+
+type RingPoint
+
+pub(all) struct ShardMove {
+  key : String
+  from_node : String?
+  to_node : String?
+  kind : MoveKind
+} derive(Eq, @debug.Debug)
+
+pub(all) struct ShardNode {
+  id : String
+  weight : Int
+  virtual_nodes : Int
+  zone : String
+  rack : String
+  status : NodeStatus
+} derive(Eq, @debug.Debug)
+pub fn ShardNode::is_eligible(Self) -> Bool
+pub fn ShardNode::new(String, zone? : String, rack? : String, weight? : Int, virtual_nodes? : Int) -> Self
+pub fn ShardNode::with_status(Self, NodeStatus) -> Self
+
+pub(all) enum TopologyIssue {
+  EmptyNodeId(Int)
+  DuplicateNodeId(String)
+  EmptyZone(String)
+  EmptyRack(String)
+} derive(Eq, @debug.Debug)
+
+// Type aliases
+
+// Traits
+
