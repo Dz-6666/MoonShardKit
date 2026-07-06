@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.2.0 - 2026-07-06
+
+### Added
+
+- Five-phase safe migration workflow generation.
+- Deterministic migration waves with global and per-node budgets.
+- Blocked-key reporting when no readable migration source exists.
+- Safety validation for phase order, wave indexes, and pressure limits.
+- Stable JSON output, CLI evidence, and a 10,000-key workflow benchmark.
+- Cross-backend regression tests for ordering, budgets, blocking, and determinism.
+
 ## 0.1.0 - 2026-07-06
 
 ### Added

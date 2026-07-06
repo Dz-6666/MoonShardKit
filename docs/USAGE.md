@@ -2,47 +2,44 @@
 
 ## 节点模型
 
-`ShardNode` 的 `id` 必须在一个拓扑快照内唯一。`weight` 表示相对容量，
+`ShardNode.id` 在单个拓扑快照中必须唯一。`weight` 表示相对容量，
 `virtual_nodes` 控制一致性哈希环密度，`zone` 和 `rack` 用于副本隔离。
-只有 `Active` 节点接收新放置；`Draining` 与 `Offline` 节点会被排除。
+只有 `Active` 节点接收新放置，`Draining` 和 `Offline` 节点会被排除。
 
-## 一致性哈希环
+## 放置算法
 
-`ConsistentHashRing::build(nodes)` 构建不可变排序环。权重为 N 的节点获得
-`virtual_nodes * N` 个点。`owner(key)` 返回主节点，`owners(key, replicas)`
-沿顺时针选择不同真实节点。
+`ConsistentHashRing::build(nodes)` 构建稳定哈希环，适合需要传统一致性哈希
+语义和批量查询的应用。
 
-适合需要长期维护环、批量查询和传统一致性哈希兼容语义的应用。
+`rendezvous_owners` 对所有节点进行确定性排名。MoonShardKit 使用整数票据
+表达权重，避免浮点对数在不同后端产生舍入差异。
 
-## Rendezvous 放置
+`place_replicas` 在排名基础上优先选择不同区域和机架。拓扑无法满足隔离时，
+会保留可用性并在分析报告中暴露违例。
 
-`rendezvous_owners` 对每个节点计算独立最高随机权重分数。MoonShardKit 使用整数
-票据表达权重，避免浮点对数在不同后端出现舍入差异。
+## 影响分析
 
-适合节点数量中等、希望免维护哈希环并直接获得全节点排名的应用。
+`plan_migration(keys, before, after)` 比较两个不可变拓扑快照，给出主节点
+变化、副本增加、副本移除、移动键数和移动比例。它适合容量评估和变更审查。
 
-## 拓扑感知副本
+## 安全迁移工作流
 
-`place_replicas` 使用 Rendezvous 排名并执行三轮选择：
+`plan_safe_migration` 将变化展开为五阶段动作：
 
-1. 新区域且新机架；
-2. 可重复区域，但同一区域内机架不同；
-3. 拓扑无法满足隔离时选择剩余高分节点。
+1. `AddTarget`：建立目标副本元数据；
+2. `Backfill`：从旧副本复制数据；
+3. `Verify`：验证目标副本完整性；
+4. `SwitchPrimary`：必要时切换主节点；
+5. `RemoveSource`：确认安全后清理旧副本。
 
-返回值中的 `complete` 区分副本是否达到请求数量。
+`max_actions_per_wave` 限制单波总动作数，`max_actions_per_node` 限制同一节点
+在一波中的压力。所有阶段严格有序；`validate_safe_migration` 可在执行前
+复核波次索引、阶段和预算。
 
-## 迁移计划
+若旧拓扑中没有可读源而新拓扑要求已有数据，键会进入 `blocked_keys`，不会
+生成危险动作。真实系统可由人工修复、备份恢复或专用引导流程处理。
 
-`plan_migration(keys, before, after)` 对比两份拓扑快照，输出：
+## 执行边界
 
-- 主节点变化；
-- 副本增加；
-- 副本移除；
-- 移动键数、未变化键数和移动比例。
-
-该函数不复制数据。应用应在验证计划后自行调度搬迁、限速和重试。
-
-## 分布分析
-
-`analyze_distribution` 汇总每节点主分片和副本数、最小/最大主负载、负载跨度、
-不完整放置、区域重复和机架重复。建议在部署拓扑前用真实键样本运行。
+MoonShardKit 不复制数据。调用方应为动作提供幂等执行、持久化检查点、重试、
+指标和审批，并只在前一阶段完成后推进下一波。

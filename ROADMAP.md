@@ -19,4 +19,10 @@
 - [x] CLI and deterministic workload
 - [x] 30+ tests and all-backend CI
 - [x] related-work and benchmark documentation
-- [ ] Mooncakes preview release
+- [x] Mooncakes preview release
+
+## 0.4 - Storage adapters
+
+- [ ] checkpoint and resume protocol for workflow executors
+- [ ] compare-and-swap topology snapshot adapter
+- [ ] configurable placement constraints

@@ -12,6 +12,10 @@ permissions:
 jobs:
   moonbit:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [native, js, wasm, wasm-gc]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -25,23 +29,22 @@ jobs:
       - name: Format check
         run: moon fmt --check
 
-      - name: Check all backends
-        run: moon check --target all
+      - name: Check
+        run: moon check --target ${{ matrix.target }}
 
-      - name: Test native
-        run: moon test --target native
-
-      - name: Test JavaScript
-        run: moon test --target js
-
-      - name: Test WebAssembly
-        run: moon test --target wasm
-
-      - name: Test Wasm GC
-        run: moon test --target wasm-gc
+      - name: Test
+        run: moon test --target ${{ matrix.target }}
 
       - name: Run placement demo
+        if: matrix.target == 'native'
         run: moon run cmd/main --target js
 
       - name: Run deterministic workload
+        if: matrix.target == 'native'
         run: moon run bench/main --target js
+
+      - name: Verify generated public API
+        if: matrix.target == 'native'
+        run: |
+          moon info
+          git diff --exit-code -- '*.mbti'

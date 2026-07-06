@@ -1,37 +1,30 @@
 # MoonShardKit
 
-面向 MoonBit 的确定性分片放置与迁移规划基础库。
+面向 MoonBit 的确定性分片放置与安全迁移规划基础库。
 
-MoonShardKit 为缓存、对象存储、任务队列、分布式索引和无状态路由提供一致性
-哈希、加权 Rendezvous、多副本拓扑隔离、扩缩容迁移计划和分布质量分析。
+MoonShardKit 服务于分布式缓存、对象存储、任务队列、搜索索引和无状态
+路由。项目不止回答“一个键属于哪个节点”，还把副本隔离、扩缩容影响、
+数据迁移顺序和节点压力预算建模为可测试、可审计的纯算法。
 
-## 核心价值
+## 核心能力
 
-- 同一拓扑和键集在 Native、JavaScript、Wasm、Wasm-GC 上得到一致结果；
-- 节点加入、退出或变权时只计算必要移动，不操作真实数据；
-- 副本优先跨可用区、跨机架，无法满足时明确降级；
-- 输出每节点负载、偏斜、约束违例和移动比例；
-- 核心不绑定网络、服务发现、数据库或云平台。
-
-## 已实现
-
-- 稳定 32 位跨后端哈希与命名空间盐；
-- 加权虚拟节点一致性哈希环；
-- 整数票据加权 Rendezvous 排名；
-- 区域/机架感知副本放置；
-- 拓扑快照迁移计划；
-- 主副本负载与约束质量报告；
-- 稳定 JSON、CLI 和 10,000 键工作负载；
-- 37 个确定性测试。
+- 跨后端稳定哈希、加权一致性哈希环和加权 Rendezvous 排名；
+- 区域与机架感知的多副本放置；
+- 节点加入、退出、排空和变权后的移动分析；
+- 建目标、回填、校验、切主、清理五阶段安全迁移工作流；
+- 全局波次并发预算和单节点压力预算；
+- 无可读源时阻止危险迁移，并报告 `blocked_keys`；
+- 负载偏斜、约束违例、移动比例和稳定 JSON 报告；
+- Native、JavaScript、Wasm、Wasm-GC 后端中立。
 
 ## 快速验证
 
 ```bash
 moon fmt --check
 moon check --target all
+moon test --target js
 moon test --target wasm
 moon test --target wasm-gc
-moon test --target js
 moon run cmd/main --target js
 moon run bench/main --target js
 ```
@@ -39,26 +32,23 @@ moon run bench/main --target js
 ## 最小示例
 
 ```moonbit
-let nodes = [
-  @moonshardkit.ShardNode::new("a", zone="east", rack="r1"),
-  @moonshardkit.ShardNode::new("b", zone="west", rack="r1"),
-  @moonshardkit.ShardNode::new("c", zone="south", rack="r2"),
-]
+let workflow = @moonshardkit.plan_safe_migration(
+  keys,
+  old_nodes,
+  new_nodes,
+  replicas=3,
+  max_actions_per_wave=64,
+  max_actions_per_node=8,
+)
 
-let placement = @moonshardkit.place_replicas(nodes, "customer-42", 3)
+assert_eq(@moonshardkit.validate_safe_migration(workflow).length(), 0)
 ```
 
-## 文档
+MoonShardKit 生成控制面计划，不连接存储系统，也不复制业务数据。应用可将
+迁移波次交给自己的执行器、检查点系统或审批流程。
 
-- [架构](docs/ARCHITECTURE.md)
-- [使用手册](docs/USAGE.md)
-- [项目价值](docs/VALUE_PROPOSITION.md)
-- [相关工作](docs/RELATED_WORK.md)
-- [验证证据](docs/EVIDENCE.md)
-- [性能计划](docs/BENCHMARK_PLAN.md)
-- [路线图](ROADMAP.md)
-- [更新日志](CHANGELOG.md)
+完整 API 示例见 [README.mbt.md](README.mbt.md)。
 
 ## License
 
-Apache-2.0.
+Apache-2.0
