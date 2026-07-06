@@ -70,6 +70,45 @@ pub(all) struct MigrationPlan {
 } derive(Debug, Eq)
 
 ///|
+/// Ordered safety phase for an executable shard migration.
+pub(all) enum MigrationPhase {
+  AddTarget
+  Backfill
+  Verify
+  SwitchPrimary
+  RemoveSource
+} derive(Debug, Eq)
+
+///|
+/// One idempotent operation in a safe migration workflow.
+pub(all) struct MigrationAction {
+  key : String
+  phase : MigrationPhase
+  from_node : String?
+  to_node : String?
+} derive(Debug, Eq)
+
+///|
+/// A deterministic group of actions that may execute concurrently.
+pub(all) struct MigrationWave {
+  index : Int
+  phase : MigrationPhase
+  actions : Array[MigrationAction]
+} derive(Debug, Eq)
+
+///|
+/// Executable migration workflow with explicit safety and pressure budgets.
+pub(all) struct SafeMigrationPlan {
+  keys : Int
+  migrating_keys : Int
+  blocked_keys : Array[String]
+  actions : Array[MigrationAction]
+  waves : Array[MigrationWave]
+  max_actions_per_wave : Int
+  max_actions_per_node : Int
+} derive(Debug, Eq)
+
+///|
 /// Per-node ownership count.
 pub(all) struct NodeLoad {
   node_id : String

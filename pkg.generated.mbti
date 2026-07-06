@@ -10,6 +10,8 @@ pub fn analyze_distribution(Array[String], Array[ShardNode], replicas? : Int, sa
 
 pub fn json_escape(String) -> String
 
+pub fn migration_phase_name(MigrationPhase) -> String
+
 pub fn move_kind_name(MoveKind) -> String
 
 pub fn movement_ratio(MigrationPlan) -> Double
@@ -24,6 +26,8 @@ pub fn placement_score(String, String, String) -> UInt
 
 pub fn plan_migration(Array[String], Array[ShardNode], Array[ShardNode], replicas? : Int, salt? : String) -> MigrationPlan
 
+pub fn plan_safe_migration(Array[String], Array[ShardNode], Array[ShardNode], replicas? : Int, max_actions_per_wave? : Int, max_actions_per_node? : Int, salt? : String) -> SafeMigrationPlan
+
 pub fn rendezvous_node_score(String, ShardNode, salt? : String) -> UInt
 
 pub fn rendezvous_owner(Array[ShardNode], String, salt? : String) -> String?
@@ -33,6 +37,8 @@ pub fn rendezvous_owners(Array[ShardNode], String, Int, salt? : String) -> Array
 pub fn stable_hash(String, seed? : UInt) -> UInt
 
 pub fn topology_is_valid(Array[ShardNode]) -> Bool
+
+pub fn validate_safe_migration(SafeMigrationPlan) -> Array[String]
 
 pub fn validate_topology(Array[ShardNode]) -> Array[TopologyIssue]
 
@@ -73,6 +79,21 @@ pub(all) struct KeyPlacement {
 } derive(Eq, @debug.Debug)
 pub fn KeyPlacement::to_json(Self) -> String
 
+pub(all) struct MigrationAction {
+  key : String
+  phase : MigrationPhase
+  from_node : String?
+  to_node : String?
+} derive(Eq, @debug.Debug)
+
+pub(all) enum MigrationPhase {
+  AddTarget
+  Backfill
+  Verify
+  SwitchPrimary
+  RemoveSource
+} derive(Eq, @debug.Debug)
+
 pub(all) struct MigrationPlan {
   keys : Int
   moved_keys : Int
@@ -80,6 +101,12 @@ pub(all) struct MigrationPlan {
   moves : Array[ShardMove]
 } derive(Eq, @debug.Debug)
 pub fn MigrationPlan::to_json(Self) -> String
+
+pub(all) struct MigrationWave {
+  index : Int
+  phase : MigrationPhase
+  actions : Array[MigrationAction]
+} derive(Eq, @debug.Debug)
 
 pub(all) enum MoveKind {
   PrimaryChanged
@@ -106,6 +133,17 @@ pub(all) enum PlacementAlgorithm {
 } derive(Eq, @debug.Debug)
 
 type RingPoint
+
+pub(all) struct SafeMigrationPlan {
+  keys : Int
+  migrating_keys : Int
+  blocked_keys : Array[String]
+  actions : Array[MigrationAction]
+  waves : Array[MigrationWave]
+  max_actions_per_wave : Int
+  max_actions_per_node : Int
+} derive(Eq, @debug.Debug)
+pub fn SafeMigrationPlan::to_json(Self) -> String
 
 pub(all) struct ShardMove {
   key : String
