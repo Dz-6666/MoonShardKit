@@ -51,6 +51,68 @@ pub fn move_kind_name(kind : MoveKind) -> String {
 }
 
 ///|
+/// Returns the stable machine-readable name of a workflow phase.
+pub fn migration_phase_name(phase : MigrationPhase) -> String {
+  match phase {
+    AddTarget => "add_target"
+    Backfill => "backfill"
+    Verify => "verify"
+    SwitchPrimary => "switch_primary"
+    RemoveSource => "remove_source"
+  }
+}
+
+///|
+fn write_migration_action(
+  builder : StringBuilder,
+  action : MigrationAction,
+) -> Unit {
+  builder.write_string(
+    "{\"key\":\"\{json_escape(action.key)}\",\"phase\":\"\{migration_phase_name(action.phase)}\",\"from\":\{optional_string_json(action.from_node)},\"to\":\{optional_string_json(action.to_node)}}",
+  )
+}
+
+///|
+/// Encodes a safe migration workflow for audit logs and control planes.
+pub fn SafeMigrationPlan::to_json(self : SafeMigrationPlan) -> String {
+  let builder = StringBuilder()
+  builder.write_string(
+    "{\"keys\":\{self.keys},\"migrating_keys\":\{self.migrating_keys},\"blocked_keys\":[",
+  )
+  for index = 0; index < self.blocked_keys.length(); index = index + 1 {
+    if index > 0 {
+      builder.write_char(',')
+    }
+    builder.write_string("\"\{json_escape(self.blocked_keys[index])}\"")
+  }
+  builder.write_string(
+    "],\"max_actions_per_wave\":\{self.max_actions_per_wave},\"max_actions_per_node\":\{self.max_actions_per_node},\"waves\":[",
+  )
+  for wave_index = 0
+      wave_index < self.waves.length()
+      wave_index = wave_index + 1 {
+    if wave_index > 0 {
+      builder.write_char(',')
+    }
+    let wave = self.waves[wave_index]
+    builder.write_string(
+      "{\"index\":\{wave.index},\"phase\":\"\{migration_phase_name(wave.phase)}\",\"actions\":[",
+    )
+    for action_index = 0
+        action_index < wave.actions.length()
+        action_index = action_index + 1 {
+      if action_index > 0 {
+        builder.write_char(',')
+      }
+      write_migration_action(builder, wave.actions[action_index])
+    }
+    builder.write_string("]}")
+  }
+  builder.write_string("]}")
+  builder.to_string()
+}
+
+///|
 /// Encodes one migration plan.
 pub fn MigrationPlan::to_json(self : MigrationPlan) -> String {
   let builder = StringBuilder()

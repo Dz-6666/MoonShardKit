@@ -50,3 +50,28 @@ test "distribution JSON includes node load evidence" {
   assert_true(json.contains("\"node_id\":\"a\""))
   assert_true(json.contains("\"primary_keys\":2"))
 }
+
+///|
+test "safe migration JSON exposes budgets and phases" {
+  let before = [
+    @moonshardkit.ShardNode::new("a"),
+    @moonshardkit.ShardNode::new("b"),
+  ]
+  let after = [
+    @moonshardkit.ShardNode::new("a"),
+    @moonshardkit.ShardNode::new("b"),
+    @moonshardkit.ShardNode::new("c"),
+  ]
+  let plan = @moonshardkit.plan_safe_migration(
+    ["one", "two"],
+    before,
+    after,
+    max_actions_per_wave=1,
+    max_actions_per_node=1,
+  )
+  let json = plan.to_json()
+  assert_true(json.contains("\"max_actions_per_wave\":1"))
+  assert_true(json.contains("\"max_actions_per_node\":1"))
+  assert_true(json.contains("\"waves\":["))
+  assert_true(json.contains("\"phase\":"))
+}

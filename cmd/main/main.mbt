@@ -55,4 +55,15 @@ fn main {
       "move=\{item.key}:\{@shard.move_kind_name(item.kind)}:\{show_node(item.from_node)}->\{show_node(item.to_node)}",
     )
   }
+  let workflow = @shard.plan_safe_migration(
+    workload,
+    cluster,
+    expanded,
+    replicas=3,
+    max_actions_per_wave=32,
+    max_actions_per_node=4,
+  )
+  println(
+    "safe_workflow={\"migrating_keys\":\{workflow.migrating_keys},\"actions\":\{workflow.actions.length()},\"waves\":\{workflow.waves.length()},\"blocked\":\{workflow.blocked_keys.length()},\"issues\":\{@shard.validate_safe_migration(workflow).length()}}",
+  )
 }
