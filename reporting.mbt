@@ -151,3 +151,30 @@ pub fn DistributionReport::to_json(self : DistributionReport) -> String {
   builder.write_string("]}")
   builder.to_string()
 }
+
+///|
+/// Encodes capacity-admitted placement evidence for control-plane logs.
+pub fn CapacityPlan::to_json(self : CapacityPlan) -> String {
+  let builder = StringBuilder()
+  builder.write_string(
+    "{\"replicas\":\{self.replicas},\"accepted_keys\":\{self.accepted_keys()},\"rejected_keys\":[",
+  )
+  for index = 0; index < self.rejected_keys.length(); index = index + 1 {
+    if index > 0 {
+      builder.write_char(',')
+    }
+    builder.write_string("\"\{json_escape(self.rejected_keys[index])}\"")
+  }
+  builder.write_string("],\"loads\":[")
+  for index = 0; index < self.loads.length(); index = index + 1 {
+    if index > 0 {
+      builder.write_char(',')
+    }
+    let load = self.loads[index]
+    builder.write_string(
+      "{\"node_id\":\"\{json_escape(load.node_id)}\",\"primary_keys\":\{load.primary_keys},\"replica_keys\":\{load.replica_keys},\"max_primary\":\{load.max_primary},\"max_replicas\":\{load.max_replicas}}",
+    )
+  }
+  builder.write_string("],\"within_capacity\":\{self.is_within_capacity()}}")
+  builder.to_string()
+}

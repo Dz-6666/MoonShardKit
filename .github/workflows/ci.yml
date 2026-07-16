@@ -10,6 +10,32 @@ permissions:
   contents: read
 
 jobs:
+  quality:
+    name: Format, public API, and warning-free gates
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup MoonBit
+        uses: hustcer/setup-moonbit@v1
+
+      # Current MoonBit CLI accepts --deny-warn for check and test. The fmt
+      # and info subcommands use these executable equivalent gates instead.
+      - name: Format check
+        run: moon fmt --check
+
+      - name: Check without warnings
+        run: moon check --deny-warn --target all
+
+      - name: Verify generated public API
+        run: |
+          moon info
+          git diff --exit-code -- '*.mbti'
+
+      - name: Test without warnings
+        run: moon test --deny-warn --target all
+
   moonbit:
     runs-on: ubuntu-latest
     strategy:
@@ -30,10 +56,10 @@ jobs:
         run: moon fmt --check
 
       - name: Check
-        run: moon check --target ${{ matrix.target }}
+        run: moon check --deny-warn --target ${{ matrix.target }}
 
       - name: Test
-        run: moon test --target ${{ matrix.target }}
+        run: moon test --deny-warn --target ${{ matrix.target }}
 
       - name: Run placement demo
         if: matrix.target == 'native'

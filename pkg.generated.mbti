@@ -24,6 +24,8 @@ pub fn place_replicas(Array[ShardNode], String, Int, salt? : String) -> KeyPlace
 
 pub fn placement_score(String, String, String) -> UInt
 
+pub fn plan_capacity_placement(Array[String], Array[ShardNode], Array[NodeCapacity], Int, salt? : String) -> CapacityPlan
+
 pub fn plan_migration(Array[String], Array[ShardNode], Array[ShardNode], replicas? : Int, salt? : String) -> MigrationPlan
 
 pub fn plan_safe_migration(Array[String], Array[ShardNode], Array[ShardNode], replicas? : Int, max_actions_per_wave? : Int, max_actions_per_node? : Int, salt? : String) -> SafeMigrationPlan
@@ -47,6 +49,24 @@ pub fn virtual_position(String, Int, UInt) -> UInt
 // Errors
 
 // Types and methods
+pub(all) struct CapacityLoad {
+  node_id : String
+  primary_keys : Int
+  replica_keys : Int
+  max_primary : Int
+  max_replicas : Int
+} derive(Eq, @debug.Debug)
+
+pub(all) struct CapacityPlan {
+  placements : Array[KeyPlacement]
+  rejected_keys : Array[String]
+  loads : Array[CapacityLoad]
+  replicas : Int
+} derive(Eq, @debug.Debug)
+pub fn CapacityPlan::accepted_keys(Self) -> Int
+pub fn CapacityPlan::is_within_capacity(Self) -> Bool
+pub fn CapacityPlan::to_json(Self) -> String
+
 pub struct ConsistentHashRing {
   points : Array[RingPoint]
   eligible_nodes : Int
@@ -113,6 +133,13 @@ pub(all) enum MoveKind {
   ReplicaAdded
   ReplicaRemoved
 } derive(Eq, @debug.Debug)
+
+pub(all) struct NodeCapacity {
+  node_id : String
+  max_primary : Int
+  max_replicas : Int
+} derive(Eq, @debug.Debug)
+pub fn NodeCapacity::new(String, Int, Int) -> Self
 
 pub(all) struct NodeLoad {
   node_id : String

@@ -131,6 +131,55 @@ pub(all) struct DistributionReport {
 } derive(Debug, Eq)
 
 ///|
+/// Hard ownership budgets for one node during a batch placement run.
+/// A missing node from the capacity list is treated as unbounded.
+pub(all) struct NodeCapacity {
+  node_id : String
+  max_primary : Int
+  max_replicas : Int
+} derive(Debug, Eq)
+
+///|
+/// Observed ownership and the configured budgets for one node.
+pub(all) struct CapacityLoad {
+  node_id : String
+  primary_keys : Int
+  replica_keys : Int
+  max_primary : Int
+  max_replicas : Int
+} derive(Debug, Eq)
+
+///|
+/// Deterministic batch placement result with explicit admission failures.
+pub(all) struct CapacityPlan {
+  placements : Array[KeyPlacement]
+  rejected_keys : Array[String]
+  loads : Array[CapacityLoad]
+  replicas : Int
+} derive(Debug, Eq)
+
+///|
+pub fn NodeCapacity::new(
+  node_id : String,
+  max_primary : Int,
+  max_replicas : Int,
+) -> NodeCapacity {
+  {
+    node_id,
+    max_primary: if max_primary < 0 {
+      0
+    } else {
+      max_primary
+    },
+    max_replicas: if max_replicas < 0 {
+      0
+    } else {
+      max_replicas
+    },
+  }
+}
+
+///|
 /// Creates a normalized active node.
 pub fn ShardNode::new(
   id : String,
