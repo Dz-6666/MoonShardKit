@@ -17,6 +17,7 @@ WebAssembly, and WebAssembly-GC.
 - Global wave concurrency and per-node pressure budgets
 - Migration-plan validation and blocked-key reporting
 - Capacity-admitted batch placement with per-node primary/replica budgets
+- Capacity adjustments, failure-domain exclusion, regional isolation, and resumable migration waves
 - Distribution, skew, and topology-violation reports
 - Stable JSON output and a runnable CLI
 - No network, database, service-discovery, or platform dependency
@@ -79,6 +80,11 @@ The scenario models a four-region control plane with 24 tenants, three
 replicas, and explicit per-node limits. It prints a stable JSON audit report
 with accepted/rejected keys and every budgeted node load.
 
+For control-plane recovery, `resume_safe_migration` takes a durable completed-
+wave checkpoint and returns a re-indexed, validation-ready remaining workflow.
+`exclude_failure_domains` and `isolate_regions` produce offline-marked topology
+snapshots without mutating the source topology.
+
 ## Verify
 
 ```bash
@@ -91,9 +97,10 @@ moon run bench/main --target js
 moon run cmd/scenario --target js
 ```
 
-The benchmark workload places 10,000 deterministic keys and reports load
-spread, movement ratio, safe-workflow action count, wave count, blocked keys,
-and validation issues after a topology change.
+The benchmark emits reproducible 1k/10k/100k rows containing movement ratio,
+load spread, migration waves, validation issues, and a stable evidence hash.
+Run the same command with `--target native`, `js`, `wasm`, or `wasm-gc` to
+compare backend output; CI executes the supported matrix.
 
 CI uses the executable quality gates supported by the current MoonBit CLI:
 `moon fmt --check`, `moon check --deny-warn --target all`, `moon info` plus a

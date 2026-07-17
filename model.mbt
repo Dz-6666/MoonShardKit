@@ -159,6 +159,20 @@ pub(all) struct CapacityPlan {
 } derive(Debug, Eq)
 
 ///|
+/// A signed update to one node's ownership budgets.
+pub(all) struct CapacityAdjustment {
+  node_id : String
+  primary_delta : Int
+  replica_delta : Int
+} derive(Debug, Eq)
+
+///|
+/// Durable progress marker for resuming a safe migration by wave.
+pub(all) struct MigrationCheckpoint {
+  completed_waves : Int
+} derive(Debug, Eq)
+
+///|
 pub fn NodeCapacity::new(
   node_id : String,
   max_primary : Int,

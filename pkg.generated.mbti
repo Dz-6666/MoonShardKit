@@ -6,7 +6,13 @@ import {
 }
 
 // Values
+pub fn adjust_capacities(Array[NodeCapacity], Array[CapacityAdjustment]) -> Array[NodeCapacity]
+
 pub fn analyze_distribution(Array[String], Array[ShardNode], replicas? : Int, salt? : String) -> DistributionReport
+
+pub fn exclude_failure_domains(Array[ShardNode], Array[String], Array[String]) -> Array[ShardNode]
+
+pub fn isolate_regions(Array[ShardNode], Array[String]) -> Array[ShardNode]
 
 pub fn json_escape(String) -> String
 
@@ -36,6 +42,8 @@ pub fn rendezvous_owner(Array[ShardNode], String, salt? : String) -> String?
 
 pub fn rendezvous_owners(Array[ShardNode], String, Int, salt? : String) -> Array[String]
 
+pub fn resume_safe_migration(SafeMigrationPlan, MigrationCheckpoint) -> SafeMigrationPlan
+
 pub fn stable_hash(String, seed? : UInt) -> UInt
 
 pub fn topology_is_valid(Array[ShardNode]) -> Bool
@@ -49,6 +57,13 @@ pub fn virtual_position(String, Int, UInt) -> UInt
 // Errors
 
 // Types and methods
+pub(all) struct CapacityAdjustment {
+  node_id : String
+  primary_delta : Int
+  replica_delta : Int
+} derive(Eq, @debug.Debug)
+pub fn CapacityAdjustment::new(String, Int, Int) -> Self
+
 pub(all) struct CapacityLoad {
   node_id : String
   primary_keys : Int
@@ -105,6 +120,11 @@ pub(all) struct MigrationAction {
   from_node : String?
   to_node : String?
 } derive(Eq, @debug.Debug)
+
+pub(all) struct MigrationCheckpoint {
+  completed_waves : Int
+} derive(Eq, @debug.Debug)
+pub fn MigrationCheckpoint::new(Int) -> Self
 
 pub(all) enum MigrationPhase {
   AddTarget
